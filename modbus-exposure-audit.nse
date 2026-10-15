@@ -30,7 +30,7 @@ blocked; a secure gateway rejects it. All register access is read-only.
 --
 -- @args modbus-audit.unit  Modbus unit/slave id to probe. Default: 1.
 
-author = "Sharvesh"
+author = "S Sharvesh"
 license = "Same as Nmap--See https://nmap.org/book/man-legal.html"
 categories = {"discovery", "safe", "vuln"}
 
