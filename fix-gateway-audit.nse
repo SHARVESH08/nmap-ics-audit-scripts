@@ -29,7 +29,7 @@ Only Logon and Heartbeat admin messages are sent; no orders are ever placed.
 -- @args fix-audit.sender  SenderCompID (49) to use. Default: AUDIT.
 -- @args fix-audit.target  TargetCompID (56) to use. Default: GATEWAY.
 
-author = "Sharvesh"
+author = "S Sharvesh"
 license = "Same as Nmap--See https://nmap.org/book/man-legal.html"
 categories = {"discovery", "safe", "vuln"}
 
