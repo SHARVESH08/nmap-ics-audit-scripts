@@ -5,11 +5,12 @@ local string = require "string"
 local table = require "table"
 
 description = [[
-Enhancement 1 of modbus-detect.nse.
+Enhancement 1 of the built-in Nmap script modbus-discover.
 
-Keeps the three baseline probes (unauthenticated read, device-identification
-fingerprint, and a safe write-rejection check) and turns them into a full
-EXPOSURE AUDIT:
+Where modbus-discover only enumerates Modbus slave/unit ids and reads their
+device-identification strings, this script keeps that fingerprinting and adds
+two more safe probes (an unauthenticated Read Holding Registers and a single
+write-rejection check) and turns the whole thing into a full EXPOSURE AUDIT:
 
   * Each probe is recorded as a PASS/FAIL finding with a short explanation.
   * The returned vendor / product / firmware strings are extracted and shown,

@@ -5,12 +5,12 @@ local string = require "string"
 local table = require "table"
 
 description = [[
-Enhancement 2 of modbus-detect.nse - the same unauthenticated-exposure audit
-technique applied to a second operational protocol, a FIX trading gateway.
+Enhancement 2 of the built-in Nmap script modbus-discover - the same
+unauthenticated-exposure audit idea applied to a second operational protocol,
+a FIX trading gateway.
 
-Keeps the three baseline FIX checks from fix-detect.nse (plaintext Logon,
-EncryptMethod echo, skipped-MsgSeqNum tolerance) and turns them into a scored
-GATEWAY AUDIT:
+Runs three FIX session-security checks (plaintext Logon, EncryptMethod echo,
+skipped-MsgSeqNum tolerance) and turns them into a scored GATEWAY AUDIT:
 
   * Each check becomes a PASS/FAIL finding with a short explanation.
   * The gateway's advertised FIX version and SenderCompID (if echoed) are
