@@ -1,51 +1,44 @@
 # nmap-ics-audit-scripts
 
-Four Nmap NSE scripts that audit two operational-technology protocols for
-**unauthenticated exposure**: Modbus/TCP (industrial control systems) and FIX
-(financial trading gateways). The project starts from a minimal Modbus
-detection script and enhances the same "can an attacker act without logging
-in?" technique into a scored Modbus exposure audit and then into a second
-protocol (FIX) gateway audit.
+Two Nmap NSE scripts that **enhance the built-in `modbus-discover` script** into
+unauthenticated-exposure auditors for operational-technology services. The
+built-in `modbus-discover` only enumerates Modbus slave ids and their device
+information; these enhancements turn that idea into scored audits and extend it
+to a second protocol (a FIX trading gateway).
 
 Created for the Cyber Security course, Fall Semester 2026-2027, SCOPE,
 VIT Chennai.
 
-> All register reads and FIX admin messages are non-destructive. The only
-> write ever attempted is a single Modbus coil write that a secure gateway is
-> expected to reject; it exists purely to prove whether writes are blocked.
-> Run these only against systems you own or are authorised to test.
+> All register reads and FIX admin messages are non-destructive. The only write
+> ever attempted is a single Modbus coil write that a secure gateway is expected
+> to reject; it exists purely to prove whether writes are blocked. Run these
+> only against systems you own or are authorised to test.
 
 ## Scripts
 
-| File | Role | What it does |
-|------|------|--------------|
-| `modbus-detect.nse` | Reference | Confirms unauthenticated Read Holding Registers + Read Device ID, and that a Write Single Coil is rejected. |
-| `modbus-exposure-audit.nse` | Enhancement 1 | Same probes as PASS/FAIL findings, extracts the device fingerprint, and scores exposure LOW/MEDIUM/HIGH (0-6). |
-| `fix-detect.nse` | Reference (2nd protocol) | Detects a FIX gateway accepting a plaintext Logon and tolerating a skipped MsgSeqNum. |
-| `fix-gateway-audit.nse` | Enhancement 2 | Turns the FIX checks into scored PASS/FAIL findings with a LOW/MEDIUM/HIGH risk rating (0-6). |
+| File | Based on | What it does |
+|------|----------|--------------|
+| `modbus-exposure-audit.nse` | `modbus-discover` (built-in) | Keeps the device fingerprint, adds an unauthenticated register-read and a write-rejection check, reports PASS/FAIL findings and scores exposure LOW/MEDIUM/HIGH (0-6). |
+| `fix-gateway-audit.nse` | `modbus-discover` (technique reused) | Applies the same exposure-audit idea to a FIX gateway: plaintext Logon, EncryptMethod echo and skipped-MsgSeqNum checks, scored LOW/MEDIUM/HIGH (0-6). |
 
 ## Usage
 
 ```bash
-# Reference - Modbus detection
-nmap -p 502 --script ./modbus-detect.nse <target>
+# Reference (built-in) script these enhance:
+nmap -p 502 --script modbus-discover <target>
 
-# Enhancement 1 - Modbus exposure audit (optional unit id)
+# Enhancement 1 - Modbus exposure audit
 nmap -p 502 --script ./modbus-exposure-audit.nse <target>
 nmap -p 502 --script ./modbus-exposure-audit.nse \
   --script-args modbus-audit.unit=1 <target>
 
-# Reference - FIX gateway detection
-nmap -p 9878 --script ./fix-detect.nse <target>
-
-# Enhancement 2 - FIX gateway audit (optional comp ids)
+# Enhancement 2 - FIX gateway audit
 nmap -p 9878 --script ./fix-gateway-audit.nse <target>
 nmap -p 9878 --script ./fix-gateway-audit.nse \
   --script-args fix-audit.sender=AUDIT,fix-audit.target=GATEWAY <target>
 ```
 
-To install into Nmap's script directory instead of running by path, copy the
-files there and refresh the script database:
+To install into Nmap's script directory instead of running by path:
 
 ```bash
 sudo cp *.nse /usr/share/nmap/scripts/
@@ -64,11 +57,11 @@ Score 0 = LOW, 1-3 = MEDIUM, 4-6 = HIGH.
 
 ## Author
 
-[Your Name]
+S Sharvesh
 
 ## Acknowledgement
 
 Course offered by SCOPE, VIT Chennai. Faculty: Dr. T. Subbulakshmi,
-Professor, SCOPE, VIT Chennai. Nmap by Gordon Lyon (Fyodor). Modbus
-specification by Modbus Organization; FIX protocol by the FIX Trading
-Community.
+Professor, SCOPE, VIT Chennai. Nmap by Gordon Lyon (Fyodor); the built-in
+`modbus-discover` script by Alexander Rudakov. Modbus specification by the
+Modbus Organization; FIX protocol by the FIX Trading Community.
